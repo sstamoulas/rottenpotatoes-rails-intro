@@ -11,13 +11,15 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
-    if (params[:sortItem] == 'title')
-      @movies.order!(:title)
-    elsif (params[:sortItem] == 'release_date')
-      @movies.order!(:release_date)
+    @all_ratings = Movie.ratings
+    @sort_Item = params[:sortItem]
+
+    if params[:ratings].present?
+      @all_ratings.each { |key, value| @all_ratings[key] = params[:ratings][key].present? }
     end
-    @sortItem = params[:sortItem]
+
+    @movies = Movie.where("rating IN (?) ", @all_ratings.keys.select { |key| @all_ratings[key] })
+    params[:sortItem].present? ? @movies.order!(params[:sortItem]) : ""
   end
 
   def new
