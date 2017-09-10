@@ -12,14 +12,17 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.ratings
-    @sort_Item = params[:sortItem]
-
-    if params[:ratings].present?
-      @all_ratings.each { |key, value| @all_ratings[key] = params[:ratings][key].present? }
+    if params[:sortItem].present?
+      session[:sortItem] = params[:sortItem]
     end
 
-    @movies = Movie.where("rating IN (?) ", @all_ratings.keys.select { |key| @all_ratings[key] })
-    params[:sortItem].present? ? @movies.order!(params[:sortItem]) : ""
+    if params[:ratings].present?
+      session[:ratings] = params[:ratings]
+    end
+
+    @movies = Movie.where("rating IN (?) ", 
+      @all_ratings.select { |key| session[:ratings].present? ? session[:ratings][key].present? : true })
+    session[:sortItem].present? ? @movies.order!(session[:sortItem]) : ""
   end
 
   def new

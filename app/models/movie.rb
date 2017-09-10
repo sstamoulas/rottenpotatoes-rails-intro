@@ -1,5 +1,5 @@
 class Movie < ActiveRecord::Base
    def self.ratings
-     return {'G' => true,'PG' => true,'PG-13' => true,'R' => true}
+     return ['G', 'PG', 'PG-13', 'R']
    end
 end
